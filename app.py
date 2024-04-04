@@ -30,3 +30,5 @@ chain = prompt | llm | output_parser
 if input_text:
     response = chain.invoke({'question': input_text})
     st.write(response)
+
+#small chanfes 
