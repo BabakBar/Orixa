@@ -17,7 +17,7 @@ prompt = ChatPromptTemplate.from_messages([
 ])
 
 # title and input field
-st.title('Chatbot with Langchain and Mistral')
+st.title('Chatbot with Langchain & Mistral')
 input_text = st.text_input("Type your question here")
 
 # Mistral model

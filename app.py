@@ -19,7 +19,7 @@ prompt = ChatPromptTemplate.from_messages([
 ])
 
 # Set up the Streamlit interface with a title and input field
-st.title('Orixa with Langchain')
+st.title('Orixa with Langchain & OpenAI')
 input_text = st.text_input("Search the topic you want")
 
 # openai llm
