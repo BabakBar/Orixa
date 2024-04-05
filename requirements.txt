@@ -3,3 +3,4 @@ langchain_core
 streamlit
 python-dotenv
 langsmith
+langchain-mistralai
