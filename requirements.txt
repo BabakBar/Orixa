@@ -1,5 +1,10 @@
 langchain-openai
+langchain_cohere
 langchain_core
 streamlit
 python-dotenv
 langsmith
+tiktoken
+langchainhub 
+chromadb
+langgraph
