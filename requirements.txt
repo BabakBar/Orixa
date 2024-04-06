@@ -9,3 +9,4 @@ langchainhub
 chromadb
 langgraph
 langchain-mistralai
+beautifulsoup4
