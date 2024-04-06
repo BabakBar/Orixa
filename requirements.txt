@@ -8,3 +8,4 @@ tiktoken
 langchainhub 
 chromadb
 langgraph
+langchain-mistralai
