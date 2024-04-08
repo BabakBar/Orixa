@@ -1,6 +1,9 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from langchain_experimental.agents.agent_toolkits import create_csv_agent
+from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
+import pandas as pd
 
 import streamlit as st
 import os
@@ -14,7 +17,7 @@ os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT")
 
 # Define a prompt template for conversation
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "You are a helpful assistant. Please respond to the user's query."),
+    ("system", "You are a professional data scientist. Please respond to the user's query about the dataset."),
     ("user", "Question:{question}")
 ])
 

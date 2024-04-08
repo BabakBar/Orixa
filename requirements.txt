@@ -10,3 +10,5 @@ chromadb
 langgraph
 langchain-mistralai
 beautifulsoup4
+langchain_experimental
+pandas
