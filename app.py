@@ -20,7 +20,10 @@ prompt = ChatPromptTemplate.from_messages([
 
 # Set up the Streamlit interface with a title and input field
 st.title('Orixa with Langchain & OpenAI')
-input_text = st.text_input("Search the topic you want")
+st.header("Talk with your data!")
+
+csv_file = st.file_uploader("Upload a CSV file", type="csv")
+input_text = st.text_input("Ask questions about your data")
 
 # openai llm
 llm = ChatOpenAI(model="gpt-3.5-turbo")
