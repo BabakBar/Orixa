@@ -13,3 +13,6 @@ beautifulsoup4
 langchain_experimental
 pandas
 tabulate
+langserve
+fastapi
+uvicorn
