@@ -1,4 +1,5 @@
 import io
+import os
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -6,9 +7,7 @@ from langchain_experimental.agents.agent_toolkits import create_csv_agent
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 from langchain.agents.agent_types import AgentType
 import pandas as pd
-
 import streamlit as st
-import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -45,7 +44,8 @@ if csv_file is not None:
     
     agent = create_csv_agent(
         ChatOpenAI(
-            model="gpt-3.5-turbo"
+            model="gpt-3.5-turbo",
+            temperature=0
         ),
         io.StringIO(file_content.decode('utf-8', errors='ignore')),  # Pass the StringIO object
         verbose=True,
