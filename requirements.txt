@@ -1,6 +1,7 @@
 langchain-openai
 langchain_cohere
 langchain_core
+langchain-community
 streamlit
 python-dotenv
 langsmith
@@ -16,3 +17,4 @@ tabulate
 langserve
 fastapi
 uvicorn
+sse_starlette
