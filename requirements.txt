@@ -13,6 +13,7 @@ langchain-mistralai
 beautifulsoup4
 langchain_experimental
 pandas
+pandasai
 tabulate
 langserve
 fastapi

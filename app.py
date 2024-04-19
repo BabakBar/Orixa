@@ -40,6 +40,9 @@ if csv_file is not None:
     
     csv_file.seek(0)
     
+    with st.expander("🔎 Dataframe Preview"):
+        st.write(df.head(5))
+    
     agent = create_csv_agent(
         ChatOpenAI(
             model="gpt-3.5-turbo",
