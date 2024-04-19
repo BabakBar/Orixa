@@ -21,11 +21,33 @@ prompt = ChatPromptTemplate.from_messages([
 ])
 
 
-# Set up the Streamlit interface with a title and input field
-st.title('Orixa with Langchain & OpenAI')
-st.header("Talk with your data!")
+# Streamlit UI
+st.title('Orixa: AI-Driven Data Insights 🚀')
+st.markdown("""
+    ## Talk with your data!
+    Orixa leverages the power of Langchain & OpenAI to turn your data into insights. 
+""")
 
-csv_file = st.file_uploader("Upload a CSV file", type="csv")
+with st.sidebar:
+    st.write("Guide")
+    st.caption(
+    """
+    Welcome to Orixa, your intelligent assistant for data analysis. Follow these steps to gain insights from your data:
+
+    1. Upload your CSV data file.
+    2. Preview your data to ensure correctness.
+    3. Ask any question related to your data in the input box.
+    4. Get instant answers and insights powered by AI.
+    """)
+        
+    st.divider()
+    st.caption("<p style='text-align: center;'>Made by <a href='https://orixainsights.com/' target='_blank'><strong>Orixa</strong></a></p>", unsafe_allow_html=True)
+
+
+
+
+
+csv_file = st.file_uploader("Upload a CSV file to begin", type="csv")
 
 if csv_file is not None:
     csv_file.seek(0)
@@ -53,9 +75,10 @@ if csv_file is not None:
         agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
     )
 
-    question = st.text_input("Ask a question about your data")
+    question = st.text_input("Ask a question about your data", placeholder="E.g., What is the average sales quantity?")
 
     if question is not None and question != "":
         with st.spinner(text="Analyzing..."):
             response = agent.invoke(question)
+            st.success("Analysis complete!")
             st.write(response["output"])
