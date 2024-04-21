@@ -25,7 +25,7 @@ prompt = ChatPromptTemplate.from_messages([
 st.title('Orixa: AI-Driven Data Insights 🚀')
 st.markdown("""
     ## Talk with your data!
-    Orixa leverages the power of Langchain & OpenAI to turn your data into insights. 
+    Orixa leverages the power of AI to turn your data into insights. 
 """)
 
 with st.sidebar:
@@ -43,42 +43,51 @@ with st.sidebar:
     st.divider()
     st.caption("<p style='text-align: center;'>Made by <a href='https://orixainsights.com/' target='_blank'><strong>Orixa</strong></a></p>", unsafe_allow_html=True)
 
+# Initialize the 'clicked' key in session state if it doesn't exist
+if 'clicked' not in st.session_state:
+    st.session_state['clicked'] = False
 
+# Define the function to be called on button click which toggles the 'clicked' state
+def toggle_clicked():
+    st.session_state['clicked'] = not st.session_state['clicked']
 
+# Button to toggle the state
+st.button("Let's get started", on_click=toggle_clicked)
 
+# Show the uploader and subsequent analysis UI only after the button has been clicked
+if st.session_state['clicked']:
+    csv_file = st.file_uploader("Upload a CSV file to begin", type="csv")
 
-csv_file = st.file_uploader("Upload a CSV file to begin", type="csv")
+    if csv_file is not None:
+        csv_file.seek(0)
+        file_content = csv_file.getvalue()
+        try:
+            df = pd.read_csv(io.StringIO(file_content.decode('utf-8')))
+        except UnicodeDecodeError:
+            df = pd.read_csv(io.StringIO(file_content.decode('ISO-8859-1')))
+        except Exception as e:
+            st.error(f"An error occurred while processing the CSV file: {e}")
+            st.stop()
 
-if csv_file is not None:
-    csv_file.seek(0)
-    file_content = csv_file.getvalue()
-    try:
-        df = pd.read_csv(io.StringIO(file_content.decode('utf-8')))
-    except UnicodeDecodeError:
-        df = pd.read_csv(io.StringIO(file_content.decode('ISO-8859-1')))
-    except Exception as e:
-        st.error(f"An error occurred while processing the CSV file: {e}")
-        st.stop()
-    
-    csv_file.seek(0)
-    
-    with st.expander("🔎 Dataframe Preview"):
-        st.write(df.head(5))
-    
-    agent = create_csv_agent(
-        ChatOpenAI(
-            model="gpt-3.5-turbo",
-            temperature=0
-        ),
-        io.StringIO(file_content.decode('utf-8', errors='ignore')),  # Pass the StringIO object
-        verbose=True,
-        agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-    )
+        with st.expander("🔎 Dataframe Preview"):
+            st.write(df.head(5))
 
-    question = st.text_input("Ask a question about your data", placeholder="E.g., What is the average sales quantity?")
+        agent = create_csv_agent(
+            ChatOpenAI(
+                model="gpt-3.5-turbo",
+                temperature=0
+            ),
+            io.StringIO(file_content.decode('utf-8', errors='ignore')),
+            verbose=True,
+            agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        )
 
-    if question is not None and question != "":
-        with st.spinner(text="Analyzing..."):
-            response = agent.invoke(question)
-            st.success("Analysis complete!")
-            st.write(response["output"])
+        question = st.text_input("Ask a question about your data", placeholder="E.g., What is the average sales quantity?")
+
+        if question:
+            with st.spinner("Analyzing..."):
+                response = agent.invoke(question)
+                st.success("Analysis complete!")
+                st.write(response["output"])
+else:
+    st.write("Please click 'Let's get started' to upload your CSV file and begin the analysis.")
