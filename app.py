@@ -2,7 +2,8 @@ import io
 import os
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_experimental.agents.agent_toolkits import create_csv_agent
+from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
+#from langchain_experimental.agents.agent_toolkits import create_csv_agent
 from langchain.agents.agent_types import AgentType
 import pandas as pd
 import streamlit as st
@@ -81,14 +82,15 @@ if st.session_state['clicked']:
         with st.expander("🔎 Dataframe Preview"):
             st.write(df.head(5))
 
-        agent = create_csv_agent(
+        agent = create_pandas_dataframe_agent(
             ChatOpenAI(
                 model="gpt-3.5-turbo",
                 temperature=0
             ),
-            io.StringIO(file_content.decode('utf-8', errors='ignore')),
+            df,
+            #io.StringIO(file_content.decode('utf-8', errors='ignore')),
             verbose=True,
-            agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+            agent_type=AgentType.OPENAI_FUNCTIONS,
         )
 
         question = st.text_input("Ask a question about your data", placeholder="E.g., What is the average sales quantity?")
