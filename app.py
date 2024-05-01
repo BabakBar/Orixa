@@ -95,6 +95,33 @@ if st.session_state['clicked']:
             verbose=True,
             agent_type=AgentType.OPENAI_FUNCTIONS,
         )
+        
+        # Display analysis options as buttons
+        st.write("Choose an analysis option:")
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            if st.button("Data Overview"):
+                st.session_state['analysis_type'] = 'overview'
+        with col2:
+            if st.button("Missing/Duplicate Values"):
+                st.session_state['analysis_type'] = 'missing_values'
+        with col3:
+            if st.button("Correlation Analysis"):
+                st.session_state['analysis_type'] = 'correlation'
+        with col4:
+            if st.button("Data Summarization"):
+                st.session_state['analysis_type'] = 'summary'
+        
+        # Example of conditionally displaying information based on button click
+        if 'analysis_type' in st.session_state:
+            if st.session_state['analysis_type'] == 'overview':
+                st.write("Displaying data overview...")
+            elif st.session_state['analysis_type'] == 'missing_values':
+                st.write("Analyzing missing or duplicate values...")
+            elif st.session_state['analysis_type'] == 'correlation':
+                st.write("Performing correlation analysis...")
+            elif st.session_state['analysis_type'] == 'summary':
+                st.write("Summarizing data...")
 
         question = st.text_input("Ask a question about your data", placeholder="E.g., What is the average sales quantity?")
 
