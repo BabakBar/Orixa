@@ -44,7 +44,7 @@ with st.sidebar:
     1. Upload your CSV data file.
     2. Preview your data to ensure correctness.
     3. Ask any question related to your data in the input box.
-    4. Get instant answers an d insights powered by AI.
+    4. Get instant answers and insights powered by AI.
     """)
         
     st.divider()
@@ -96,22 +96,46 @@ if st.session_state['clicked']:
             agent_type=AgentType.OPENAI_FUNCTIONS,
         )
         
-        # Display analysis options as buttons
+        # Display analysis options as buttons with consistent styling
         st.write("Choose an analysis option:")
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            if st.button("Data Overview"):
-                st.session_state['analysis_type'] = 'overview'
-        with col2:
-            if st.button("Missing/Duplicate Values"):
-                st.session_state['analysis_type'] = 'missing_values'
-        with col3:
-            if st.button("Correlation Analysis"):
-                st.session_state['analysis_type'] = 'correlation'
-        with col4:
-            if st.button("Data Summarization"):
-                st.session_state['analysis_type'] = 'summary'
+        btn_style = """
+            <style>
+                div.stButton > button {
+                    width: 100%;  # Ensures full width
+                    border: 2px solid #4CAF50;  # Green border
+                    border-radius: 10px;  # Rounded corners
+                    background-color: #FFFFFF;  # White background color
+                    color: black;  # Text color
+                    padding: 10px 24px;  # Padding inside the button
+                    margin: 0 5px 10px 5px;  # Margin around buttons
+                    font-size: 16px;  # Font size
+                    text-align: center;  # Center the text
+                    transition: all 0.3s;  # Smooth transition for hover effect
+                    box-shadow: 2px 5px #888888; 
+                }
+                
+                div.stButton > button:hover {
+                    color: white;  # White text on hover
+                }
+            </style>
+            """
+        st.markdown(btn_style, unsafe_allow_html=True)
         
+        # Display analysis options as buttons in a 2x2 grid layout
+        row1_col1, row1_col2 = st.columns(2)
+        row2_col1, row2_col2 = st.columns(2)
+
+        button_labels = ["Data Overview", "Missing/Duplicate Values", "Correlation Analysis", "Data Summarization"]
+        analysis_types = ['overview', 'missing_values', 'correlation', 'summary']
+        columns = [row1_col1, row1_col2, row2_col1, row2_col2]
+
+        # Creating buttons in a loop to reduce redundancy
+        for i, col in enumerate(columns):
+            with col:
+                if st.button(button_labels[i]):
+                    st.session_state['analysis_type'] = analysis_types[i]
+
+
         # Example of conditionally displaying information based on button click
         if 'analysis_type' in st.session_state:
             if st.session_state['analysis_type'] == 'overview':
