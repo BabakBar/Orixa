@@ -43,8 +43,8 @@ with st.sidebar:
 
     1. Upload your CSV data file.
     2. Preview your data to ensure correctness.
-    3. Ask any question related to your data in the input box.
-    4. Get instant answers and insights powered by AI.
+    3. Use the analysis options to start gaining insights.
+    4. Ask specific questions about your data.
     """)
         
     st.divider()
