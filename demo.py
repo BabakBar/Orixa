@@ -29,9 +29,8 @@ prompt = ChatPromptTemplate.from_messages([
 
 
 # Streamlit UI
-st.title('Orixa: AI-Driven Data Insights 🚀')
+st.title('Orixa: Enhanced Customer Insight 🚀')
 st.markdown("""
-    ## Talk with your data!
     Orixa leverages the power of AI to turn your data into insights. 
 """)
 
@@ -58,6 +57,104 @@ with st.sidebar:
                 - **Correlation Analysis:** Check for relationships between variables, using statistics and visualizations.
                 - **Data Visualization:** Create various plots to understand the data's story and insights.
                 """, unsafe_allow_html=True)
+
+# Custom CSS for styling
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+    body {
+        background-color: #000000;
+        color: #FFFFFF;
+        font-family: 'Roboto', sans-serif;
+    }
+    .main-title {
+        text-align: center;
+        margin-top: 50px;
+        font-size: 2.5em;
+        color: #FFFFFF;
+    }
+    .sub-title {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 1.2em;
+        color: #BBBBBB;
+    }
+    .logo {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 150px;
+    }
+    .card-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        justify-items: center;
+        margin-top: 50px;
+    }
+    .card {
+        background-color: #1A1A1A;
+        border: 2px solid #8A2BE2;  /* Purple border */
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.3s;
+        width: 300px;
+        height: 200px;
+    }
+    .card:hover {
+        transform: scale(1.05);
+    }
+    .card-title {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+        color: #FFFFFF;
+    }
+    .card-content {
+        font-size: 1em;
+        color: #AAAAAA;
+    }
+    .chat-section {
+        margin-top: 50px;
+        text-align: center;
+    }
+    .chat-input-container {
+        display: flex;
+        justify-content: center;
+    }
+    .chat-input {
+        width: 60%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 2px solid #4CAF50;
+        background-color: #1A1A1A;
+        color: #FFFFFF;
+        font-size: 1em;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Card Layout
+st.markdown("<div class='card-container'>", unsafe_allow_html=True)
+card_titles = ["COMPETITOR CONTENT ANALYSIS", "CREATIVE EFFECTIVENESS", "GENERATE CONTENT", "AUDIENCE INSIGHTS"]
+card_contents = [
+    "Find out trends and competitive whitespaces",
+    "Expert review on existing creativity",
+    "Co-create content relevant for your target audience",
+    "Understand your customers, compare segments and uncover audience opportunities"
+]
+
+for i in range(4):
+    st.markdown(f"""
+        <div class='card'>
+            <div class='card-title'>{card_titles[i]}</div>
+            <div class='card-content'>{card_contents[i]}</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
+
 
 # Initialize the 'clicked' key in session state if it doesn't exist
 if 'clicked' not in st.session_state:
@@ -129,7 +226,7 @@ if st.session_state['clicked']:
         analysis_types = ['overview', 'missing_values', 'correlation', 'summary']
         columns = [row1_col1, row1_col2, row2_col1, row2_col2]
 
-        # Creating buttons in a loop to reduce redundancy
+        # Creating buttons in a loop
         for i, col in enumerate(columns):
             with col:
                 if st.button(button_labels[i]):
