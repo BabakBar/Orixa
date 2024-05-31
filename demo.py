@@ -10,6 +10,9 @@ import streamlit as st
 from dotenv import load_dotenv
 load_dotenv()
 
+# Set the page configuration to use the full width layout
+#st.set_page_config(layout="wide")
+
 os.environ["OPENAI_API_KEY"]=os.getenv("OPENAI_API_KEY")
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
@@ -68,24 +71,33 @@ if 'clicked' not in st.session_state:
 # Define the function to be called on button click which toggles the 'clicked' state
 def toggle_clicked(i):
     st.session_state['clicked'] = i
-
+    
 # Custom CSS for button styling
 btn_style = """
     <style>
+        .card-btn-container {
+            display: flex;
+            justify-content: space-around;  /* Adjust to space-around for even spacing */
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            width: 100%;  /* Ensure the container uses the full width */
+        }
         .card-btn {
             display: inline-block;
-            width: 100%;
+            width: 200px;
+            height: 150px;
             border: 2px solid #8A2BE2;  /* Dark purple border */
             border-radius: 10px;  /* Rounded corners */
             background-color: #FFFFFF;  /* White background color */
             color: black;  /* Text color */
             padding: 20px;  /* Padding inside the button */
-            margin: 0 5px 10px 5px;  /* Margin around buttons */
             font-size: 16px;  /* Font size */
             text-align: center;  /* Center-align text */
             transition: all 0.3s;  /* Smooth transition for hover effect */
             box-shadow: 2px 5px #888888; 
             text-decoration: none;
+            cursor: pointer;
         }
         
         .card-btn:hover {
@@ -109,7 +121,6 @@ card_contents = [
     "Co-create content relevant for your target audience",
     "Understand your customers, compare segments and uncover audience opportunities"
 ]
-analysis_types = ['competitor_content', 'creative_effectiveness', 'generate_content', 'audience_insights']
 
 # Initialize session state for clicked buttons
 if 'clicked' not in st.session_state:
@@ -119,18 +130,18 @@ def set_clicked(index):
     st.session_state['clicked'] = index
 
 # Display cards as buttons in a 2x2 grid layout
-row1_col1, row1_col2 = st.columns(2)
-row2_col1, row2_col2 = st.columns(2)
-columns = [row1_col1, row1_col2, row2_col1, row2_col2]
+cols = st.columns(2)
 
-for i, col in enumerate(columns):
+for i, title in enumerate(card_titles):
+    col = cols[i % 2]
     with col:
-        if st.button(card_titles[i], key=f'button_{i}'):
+        if st.button(title, key=f'button_{i}'):
             set_clicked(i)
 
-# Display the message below when a button is clicked
+
+# Display the content below when a button is clicked
 if st.session_state['clicked'] is not None:
-    st.write(f"You clicked on {card_titles[st.session_state['clicked']]}")
+    st.write(card_contents[st.session_state['clicked']])
 
 # Button to toggle the state
 st.button("Start Data Analysis", on_click=toggle_clicked)
