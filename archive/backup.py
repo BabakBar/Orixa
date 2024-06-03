@@ -3,14 +3,17 @@ import os
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
+#from langchain_experimental.agents.agent_toolkits import create_csv_agent
 from langchain.agents.agent_types import AgentType
 import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
-
 load_dotenv()
 
-os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+# Set the page configuration to use the full width layout
+#st.set_page_config(layout="wide")
+
+os.environ["OPENAI_API_KEY"]=os.getenv("OPENAI_API_KEY")
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
 os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT")
@@ -21,115 +24,45 @@ llm0 = ChatOpenAI(
                 temperature=0
 )
 
-# Define a prompt template for conversation
+#Define a prompt template for conversation
 prompt = ChatPromptTemplate.from_messages([
-    ("system", "As a top-tier data scientist, your role is to derive insightful analyses and patterns from various datasets. You're specialized in marketing and sales analytics, your role is to extract actionable insights and identify customer behavior patterns from sales and marketing campaign datasets. Use your expertise to provide recommendations and strategies that would benefit marketing or sales managers. Highlight key trends, predictive analytics, and segmentation analysis. Your responses should be clear, insightful, and in professional data science terminology. Address specific queries with detailed data insights, trend analysis, and predictive outcomes when applicable. Always provide comprehensive explanations about the steps you went through to get to the Final Answer. Please output a paragraph summarizing your findings."),
+    ("system", "As a top-tier data scientist, your role is to derive insightful analyses and patterns from various datasets. You're specialized in marketing and sales analytics, your role is to extract actionable insights and identify customer behavior patterns from sales and marketing campaign datasets. Use your expertise to provide recommendations and strategies that would benefit marketing or sales managers. Highlight key trends, predictive analytics, and segmentation analysis. Your responses should be clear, insightful, and in professional data science terminology. Address specific queries with detailed data insights, trend analysis, and predictive outcomes when applicable. Always provide comprehensive explanations about the steps you went through to get to the Final Answer. Please output a paragraph summurizing you findings"),
     ("user", "Question: {question}")
 ])
 
-# Streamlit UI configuration
-st.set_page_config(layout="wide")
 
-# Custom CSS for styling
+# Streamlit UI
+st.title('Orixa: Enhanced Customer Insight 🚀')
 st.markdown("""
-    <style>
-    body {
-        background-color: #000000;
-        color: #FFFFFF;
-        font-family: Arial, sans-serif;
-    }
-    .main-title {
-        text-align: center;
-        margin-top: 50px;
-        font-size: 2.5em;
-        color: #FFFFFF;
-    }
-    .sub-title {
-        text-align: center;
-        margin-top: 20px;
-        font-size: 1.2em;
-        color: #BBBBBB;
-    }
-    .logo {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 150px;
-    }
-    .card-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 50px;
-        gap: 20px;
-    }
-    .card {
-        background-color: #1A1A1A;
-        border: 2px solid #4CAF50;
-        border-radius: 10px;
-        padding: 20px;
-        text-align: center;
-        transition: transform 0.3s;
-        width: 300px;
-        height: 200px;
-    }
-    .card:hover {
-        transform: scale(1.05);
-    }
-    .card-title {
-        font-size: 1.2em;
-        margin-bottom: 10px;
-        color: #FFFFFF;
-    }
-    .card-content {
-        font-size: 1em;
-        color: #AAAAAA;
-    }
-    .chat-section {
-        margin-top: 50px;
-        text-align: center;
-    }
-    .chat-input-container {
-        display: flex;
-        justify-content: center;
-    }
-    .chat-input {
-        width: 60%;
-        padding: 10px;
-        border-radius: 5px;
-        border: 2px solid #4CAF50;
-        background-color: #1A1A1A;
-        color: #FFFFFF;
-        font-size: 1em;
-    }
-    </style>
-""", unsafe_allow_html=True)
+    Orixa leverages the power of AI to turn your data into insights. 
+""")
 
-# Main Title
-st.markdown("<div class='main-title'>ENHANCED CUSTOMER INSIGHT</div>", unsafe_allow_html=True)
-st.markdown("<div class='sub-title'>THANK YOU FOR CHECKING IN<br>HOW CAN I HELP YOU?</div>", unsafe_allow_html=True)
+with st.sidebar:
+    st.write("Guide")
+    st.caption(
+    """
+    Welcome to Orixa, your intelligent assistant for data analysis. Follow these steps to gain insights from your data:
 
-# Placeholder for logo
-st.markdown("<img src='https://via.placeholder.com/150' alt='Logo' class='logo'>", unsafe_allow_html=True)
+    1. Upload your CSV data file.
+    2. Preview your data to ensure correctness.
+    3. Use the analysis options to start gaining insights.
+    4. Ask specific questions about your data.
+    """)
+        
+    st.divider()
+    st.caption("<p style='text-align: center;'>Made by <a href='https://orixainsights.com/' target='_blank'><strong>Orixa</strong></a></p>", unsafe_allow_html=True)
+    
+    with st.expander("What are the steps of EDA?"):
+                st.markdown("""
+                - **Data Cleaning:** Examining the data for missing values, inconsistencies, handling missing data, and identifying outliers.
+                - **Data Profiling:** Review data types, count of unique values, and statistics to understand distributions.
+                - **Data Exploring:** Use summary statistics and visualization tools to understand the data and find patterns.
+                - **Correlation Analysis:** Check for relationships between variables, using statistics and visualizations.
+                - **Data Visualization:** Create various plots to understand the data's story and insights.
+                """, unsafe_allow_html=True)
 
-# Card Layout
-st.markdown("<div class='card-container'>", unsafe_allow_html=True)
-card_titles = ["COMPETITOR CONTENT ANALYSIS", "CREATIVE EFFECTIVENESS", "GENERATE CONTENT", "AUDIENCE INSIGHTS"]
-card_contents = [
-    "Find out trends and competitive whitespaces",
-    "Expert review on existing creativity",
-    "Co-create content relevant for your target audience",
-    "Understand your customers, compare segments and uncover audience opportunities"
-]
 
-for i in range(4):
-    st.markdown(f"""
-        <div class='card'>
-            <div class='card-title'>{card_titles[i]}</div>
-            <div class='card-content'>{card_contents[i]}</div>
-        </div>
-    """, unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
 
 # Initialize the 'clicked' key in session state if it doesn't exist
 if 'clicked' not in st.session_state:
@@ -138,9 +71,80 @@ if 'clicked' not in st.session_state:
 # Define the function to be called on button click which toggles the 'clicked' state
 def toggle_clicked():
     st.session_state['clicked'] = not st.session_state['clicked']
+    
+# Custom CSS for button styling
+btn_style = """
+    <style>
+        .card-btn-container {
+            display: flex;
+            justify-content: space-around;  /* Adjust to space-around for even spacing */
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            width: 100%;  /* Ensure the container uses the full width */
+        }
+        .card-btn {
+            display: inline-block;
+            width: 200px;
+            height: 150px;
+            border: 2px solid #8A2BE2;  /* Dark purple border */
+            border-radius: 10px;  /* Rounded corners */
+            background-color: #FFFFFF;  /* White background color */
+            color: black;  /* Text color */
+            padding: 20px;  /* Padding inside the button */
+            font-size: 16px;  /* Font size */
+            text-align: center;  /* Center-align text */
+            transition: all 0.3s;  /* Smooth transition for hover effect */
+            box-shadow: 2px 5px #888888; 
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .card-btn:hover {
+            color: white;  /* White text on hover */
+            background-color: #4CAF50;  /* Green background color when hovered */
+        }
+        
+        .card-btn.clicked {
+            background-color: #4CAF50;  /* Green background color when clicked */
+            color: white;  /* White text when clicked */
+        }
+    </style>
+    """
+st.markdown(btn_style, unsafe_allow_html=True)
+
+# Card titles and contents
+card_titles = ["COMPETITOR CONTENT ANALYSIS", "CREATIVE EFFECTIVENESS", "GENERATE CONTENT", "AUDIENCE INSIGHTS"]
+card_contents = [
+    "Find out trends and competitive whitespaces",
+    "Expert review on existing creativity",
+    "Co-create content relevant for your target audience",
+    "Understand your customers, compare segments and uncover audience opportunities"
+]
+
+# Initialize session state for clicked buttons
+if 'clicked' not in st.session_state:
+    st.session_state['clicked'] = None
+
+def set_clicked(index):
+    st.session_state['clicked'] = index
+
+# Display cards as buttons in a 2x2 grid layout
+cols = st.columns(2)
+
+for i, title in enumerate(card_titles):
+    col = cols[i % 2]
+    with col:
+        if st.button(title, key=f'button_{i}'):
+            set_clicked(i)
+
+
+# Display the content below when a button is clicked
+if st.session_state['clicked'] is not None:
+    st.write(card_contents[st.session_state['clicked']])
 
 # Button to toggle the state
-st.button("Let's get started", on_click=toggle_clicked)
+st.button("Start Data Analysis", on_click=toggle_clicked)
 
 # Show the uploader and subsequent analysis UI only after the button has been clicked
 if st.session_state['clicked']:
@@ -163,6 +167,7 @@ if st.session_state['clicked']:
         agent = create_pandas_dataframe_agent(
             llm0,
             df,
+            #io.StringIO(file_content.decode('utf-8', errors='ignore')),
             verbose=True,
             agent_type=AgentType.OPENAI_FUNCTIONS,
         )
@@ -172,20 +177,21 @@ if st.session_state['clicked']:
         btn_style = """
             <style>
                 div.stButton > button {
-                    width: 100%;
-                    border: 2px solid #4CAF50;
-                    border-radius: 10px;
-                    background-color: #FFFFFF;
-                    color: black;
-                    padding: 10px 24px;
-                    margin: 0 5px 10px 5px;
-                    font-size: 16px;
-                    text-align: center;
-                    transition: all 0.3s;
+                    width: 100%;  # Ensures full width
+                    border: 2px solid #4CAF50;  # Green border
+                    border-radius: 10px;  # Rounded corners
+                    background-color: #FFFFFF;  # White background color
+                    color: black;  # Text color
+                    padding: 10px 24px;  # Padding inside the button
+                    margin: 0 5px 10px 5px;  # Margin around buttons
+                    font-size: 16px;  # Font size
+                    text-align: center;  # Center the text
+                    transition: all 0.3s;  # Smooth transition for hover effect
                     box-shadow: 2px 5px #888888; 
                 }
+                
                 div.stButton > button:hover {
-                    color: white;
+                    color: white;  # White text on hover
                 }
             </style>
             """
@@ -199,11 +205,12 @@ if st.session_state['clicked']:
         analysis_types = ['overview', 'missing_values', 'correlation', 'summary']
         columns = [row1_col1, row1_col2, row2_col1, row2_col2]
 
-        # Creating buttons in a loop to reduce redundancy
+        # Creating buttons in a loop
         for i, col in enumerate(columns):
             with col:
                 if st.button(button_labels[i]):
                     st.session_state['analysis_type'] = analysis_types[i]
+
 
         # Example of conditionally displaying information based on button click
         if 'analysis_type' in st.session_state:
@@ -221,22 +228,8 @@ if st.session_state['clicked']:
         if question:
             with st.spinner("Analyzing..."):
                 response = agent.invoke(question)
+                #st.success("Analysis complete!")
                 st.write(response["output"])
+                         
 else:
-    st.write("Please click 'Let's get started' to upload your CSV file and begin the analysis.")
-
-# Chat Section
-st.markdown("<div class='chat-section'>", unsafe_allow_html=True)
-st.markdown("<div class='chat-input-container'>", unsafe_allow_html=True)
-user_input = st.text_input("Chat with Orixa...", key="chat_input", placeholder="Type your message here...", label_visibility="hidden")
-st.markdown("</div>", unsafe_allow_html=True)
-
-# Handle chat input
-if user_input:
-    if 'chat_history' not in st.session_state:
-        st.session_state['chat_history'] = []
-
-    st.session_state['chat_history'].append(("user", user_input))
-    with st.spinner("AI is typing..."):
-        agent_response = agent.invoke(user_input)["output"]
-    st.session_state['chat_history'].append(("ai", agent_response))
+    st.write("Please click 'Start Data Analysis' to upload your CSV file and begin the analysis.")

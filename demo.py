@@ -68,9 +68,8 @@ with st.sidebar:
 if 'clicked' not in st.session_state:
     st.session_state['clicked'] = False
 
-# Define the function to be called on button click which toggles the 'clicked' state
-def toggle_clicked():
-    st.session_state['clicked'] = not st.session_state['clicked']
+def set_clicked(index):
+    st.session_state['clicked'] = index
     
 # Custom CSS for button styling
 btn_style = """
@@ -115,6 +114,7 @@ st.markdown(btn_style, unsafe_allow_html=True)
 
 # Card titles and contents
 card_titles = ["COMPETITOR CONTENT ANALYSIS", "CREATIVE EFFECTIVENESS", "GENERATE CONTENT", "AUDIENCE INSIGHTS"]
+card_functions = [analyze_competitors, analyze_creativity, generate_content, analyze_audience]
 card_contents = [
     "Find out trends and competitive whitespaces",
     "Expert review on existing creativity",
@@ -139,11 +139,15 @@ for i, title in enumerate(card_titles):
             set_clicked(i)
 
 
-# Display the content below when a button is clicked
 if st.session_state['clicked'] is not None:
-    st.write(card_contents[st.session_state['clicked']])
+    function_to_call = card_functions[st.session_state['clicked']]
+    result = function_to_call()
+    st.write(result)
 
-# Button to toggle the state
+def toggle_clicked():
+    st.session_state['clicked'] = not st.session_state['clicked']
+    
+    
 st.button("Start Data Analysis", on_click=toggle_clicked)
 
 # Show the uploader and subsequent analysis UI only after the button has been clicked
