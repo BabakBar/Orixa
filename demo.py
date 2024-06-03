@@ -1,11 +1,7 @@
-import io
 import os
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 #from langchain_experimental.agents.agent_toolkits import create_csv_agent
-from langchain.agents.agent_types import AgentType
-import pandas as pd
 import streamlit as st
 from competitor_analysis import analyze_competitors
 from creative_effectiveness import analyze_creativity
@@ -68,50 +64,49 @@ with st.sidebar:
 
 
 
-
 # Initialize the 'clicked' key in session state if it doesn't exist
 if 'clicked' not in st.session_state:
     st.session_state['clicked'] = False
 
 def set_clicked(index):
     st.session_state['clicked'] = index
-    
+
 # Custom CSS for button styling
 btn_style = """
     <style>
         .card-btn-container {
             display: flex;
-            justify-content: space-around;  /* Adjust to space-around for even spacing */
+            justify-content: space-around;
             align-items: center;
             gap: 20px;
             margin: 20px 0;
-            width: 100%;  /* Ensure the container uses the full width */
+            width: 100%;
         }
         .card-btn {
             display: inline-block;
             width: 200px;
             height: 150px;
-            border: 2px solid #8A2BE2;  /* Dark purple border */
-            border-radius: 10px;  /* Rounded corners */
-            background-color: #FFFFFF;  /* White background color */
-            color: black;  /* Text color */
-            padding: 20px;  /* Padding inside the button */
-            font-size: 16px;  /* Font size */
-            text-align: center;  /* Center-align text */
-            transition: all 0.3s;  /* Smooth transition for hover effect */
-            box-shadow: 2px 5px #888888; 
+            border: 2px solid #8A2BE2;
+            border-radius: 10px;
+            background-color: #FFFFFF;
+            color: black;
+            padding: 20px;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 2px 5px #888888;
             text-decoration: none;
             cursor: pointer;
         }
         
         .card-btn:hover {
-            color: white;  /* White text on hover */
-            background-color: #4CAF50;  /* Green background color when hovered */
+            color: white;
+            background-color: #4CAF50;
         }
         
         .card-btn.clicked {
-            background-color: #4CAF50;  /* Green background color when clicked */
-            color: white;  /* White text when clicked */
+            background-color: #4CAF50;
+            color: white;
         }
     </style>
     """
@@ -131,7 +126,7 @@ card_contents = [
 if 'clicked' not in st.session_state:
     st.session_state['clicked'] = None
 
-def set_clicked(index):
+def set_clicked(index):  # noqa: F811
     st.session_state['clicked'] = index
 
 # Display cards as buttons in a 2x2 grid layout
@@ -143,102 +138,15 @@ for i, title in enumerate(card_titles):
         if st.button(title, key=f'button_{i}'):
             set_clicked(i)
 
+# Add the Start Data Analysis button separately
+if st.button("Start Data Analysis"):
+    set_clicked(len(card_titles))  # Use a special index to indicate data analysis
 
+# Check the clicked state and call the corresponding function
 if st.session_state['clicked'] is not None:
-    function_to_call = card_functions[st.session_state['clicked']]
-    result = function_to_call()
-    st.write(result)
-
-def toggle_clicked():
-    st.session_state['clicked'] = not st.session_state['clicked']
-    
-    
-st.button("Start Data Analysis", on_click=toggle_clicked)
-
-# Show the uploader and subsequent analysis UI only after the button has been clicked
-if st.session_state['clicked']:
-    csv_file = st.file_uploader("Upload a CSV file to begin", type="csv")
-
-    if csv_file is not None:
-        csv_file.seek(0)
-        file_content = csv_file.getvalue()
-        try:
-            df = pd.read_csv(io.StringIO(file_content.decode('utf-8')))
-        except UnicodeDecodeError:
-            df = pd.read_csv(io.StringIO(file_content.decode('ISO-8859-1')))
-        except Exception as e:
-            st.error(f"An error occurred while processing the CSV file: {e}")
-            st.stop()
-
-        with st.expander("🔎 Dataframe Preview"):
-            st.write(df.head(5))
-
-        agent = create_pandas_dataframe_agent(
-            llm0,
-            df,
-            #io.StringIO(file_content.decode('utf-8', errors='ignore')),
-            verbose=True,
-            agent_type=AgentType.OPENAI_FUNCTIONS,
-        )
-        
-        # Display analysis options as buttons with consistent styling
-        st.write("Choose an analysis option:")
-        btn_style = """
-            <style>
-                div.stButton > button {
-                    width: 100%;  # Ensures full width
-                    border: 2px solid #4CAF50;  # Green border
-                    border-radius: 10px;  # Rounded corners
-                    background-color: #FFFFFF;  # White background color
-                    color: black;  # Text color
-                    padding: 10px 24px;  # Padding inside the button
-                    margin: 0 5px 10px 5px;  # Margin around buttons
-                    font-size: 16px;  # Font size
-                    text-align: center;  # Center the text
-                    transition: all 0.3s;  # Smooth transition for hover effect
-                    box-shadow: 2px 5px #888888; 
-                }
-                
-                div.stButton > button:hover {
-                    color: white;  # White text on hover
-                }
-            </style>
-            """
-        st.markdown(btn_style, unsafe_allow_html=True)
-        
-        # Display analysis options as buttons in a 2x2 grid layout
-        row1_col1, row1_col2 = st.columns(2)
-        row2_col1, row2_col2 = st.columns(2)
-
-        button_labels = ["Data Overview", "Missing/Duplicate Values", "Correlation Analysis", "Data Summarization"]
-        analysis_types = ['overview', 'missing_values', 'correlation', 'summary']
-        columns = [row1_col1, row1_col2, row2_col1, row2_col2]
-
-        # Creating buttons in a loop
-        for i, col in enumerate(columns):
-            with col:
-                if st.button(button_labels[i]):
-                    st.session_state['analysis_type'] = analysis_types[i]
-
-
-        # Example of conditionally displaying information based on button click
-        if 'analysis_type' in st.session_state:
-            if st.session_state['analysis_type'] == 'overview':
-                st.write("Displaying data overview...")
-            elif st.session_state['analysis_type'] == 'missing_values':
-                st.write("Analyzing missing or duplicate values...")
-            elif st.session_state['analysis_type'] == 'correlation':
-                st.write("Performing correlation analysis...")
-            elif st.session_state['analysis_type'] == 'summary':
-                st.write("Summarizing data...")
-
-        question = st.text_input("Ask a question about your data", placeholder="E.g., What is the average sales quantity?")
-
-        if question:
-            with st.spinner("Analyzing..."):
-                response = agent.invoke(question)
-                #st.success("Analysis complete!")
-                st.write(response["output"])
-                         
-else:
-    st.write("Please click 'Start Data Analysis' to upload your CSV file and begin the analysis.")
+    if st.session_state['clicked'] < len(card_titles):
+        function_to_call = card_functions[st.session_state['clicked']]
+        result = function_to_call()
+        st.write(result)
+    elif st.session_state['clicked'] == len(card_titles):
+        start_data_analysis()
