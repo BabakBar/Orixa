@@ -69,8 +69,8 @@ if 'clicked' not in st.session_state:
     st.session_state['clicked'] = False
 
 # Define the function to be called on button click which toggles the 'clicked' state
-def toggle_clicked(i):
-    st.session_state['clicked'] = i
+def toggle_clicked():
+    st.session_state['clicked'] = not st.session_state['clicked']
     
 # Custom CSS for button styling
 btn_style = """
