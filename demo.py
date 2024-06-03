@@ -7,6 +7,11 @@ from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe
 from langchain.agents.agent_types import AgentType
 import pandas as pd
 import streamlit as st
+from competitor_analysis import analyze_competitors
+from creative_effectiveness import analyze_creativity
+from generate_content import generate_content
+from audience_insights import analyze_audience
+from data_analysis import start_data_analysis
 from dotenv import load_dotenv
 load_dotenv()
 
