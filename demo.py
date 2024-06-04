@@ -91,7 +91,7 @@ btn_style = """
 st.markdown(btn_style, unsafe_allow_html=True)
 
 # Card titles and contents
-card_titles = ["COMPETITOR CONTENT ANALYSIS", "CREATIVE EFFECTIVENESS", "GENERATE CONTENT", "AUDIENCE INSIGHTS"]
+card_titles = ["Competetitor Content Analysis", "Creative Effectiveness", "Generate Content", "Audience Insights"]
 card_functions = [analyze_competitors, analyze_creativity, generate_content, analyze_audience]
 card_contents = [
     "Find out trends and competitive whitespaces",
@@ -125,6 +125,9 @@ if st.session_state['clicked'] is not None:
     if st.session_state['clicked'] < len(card_titles):
         function_to_call = card_functions[st.session_state['clicked']]
         result = function_to_call()
-        st.write(result)
+        if result is not None:
+            st.write(result)
     elif st.session_state['clicked'] == len(card_titles):
         start_data_analysis()
+else:
+    st.write("Please click 'Start Data Analysis' to upload your CSV file and begin the analysis.")
