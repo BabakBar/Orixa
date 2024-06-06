@@ -47,7 +47,7 @@ def start_data_analysis():
             agent_type=AgentType.OPENAI_FUNCTIONS,
         )
         
-        st.write("Choose an analysis option:")
+        st.write("Choose an analysis option to start or directly ask your questions")
         btn_style = """
             <style>
                 div.stButton > button {
@@ -83,38 +83,23 @@ def start_data_analysis():
                 if st.button(button_labels[i]):
                     st.session_state['analysis_type'] = analysis_types[i]
         
-        # Function to handle data overview
-        def data_overview(df):
-            st.write("Displaying data overview...")
-            st.write(df.describe())
 
-        # Function to handle missing/duplicate values analysis
-        def check_missing_duplicate_values(df):
-            st.write("Analyzing missing or duplicate values...")
-            st.write(f"Missing Values:\n{df.isnull().sum()}")
-            st.write(f"Duplicate Rows:\n{df.duplicated().sum()}")
-
-        # Function to handle correlation analysis
-        def correlation_analysis(df):
-            st.write("Performing correlation analysis...")
-            st.write(df.corr())
-
-        # Function to handle data summarization
-        def data_summarization(df):
-            st.write("Summarizing data...")
-            st.write(df.describe(include='all'))
+        # Function to handle analysis and explanations
+        def perform_analysis(df, analysis_type):
+            if analysis_type == 'overview':
+                response = agent.invoke("Provide an overview of the data including number of entries, time range, and top categories.")
+            elif analysis_type == 'missing_values':
+                response = agent.invoke("Check for missing or duplicate values and count unique values for each column.")
+            elif analysis_type == 'correlation':
+                response = agent.invoke("Analyze the correlation between sales and profit, and between discount and profit.")
+            elif analysis_type == 'summary':
+                response = agent.invoke("Summarize total sales and profit, average discount rate, and sales by region. Provide summary statistics for numerical columns.")
+            return response["output"]
 
         # Dispatching analysis based on user selection
         if st.session_state['analysis_type'] is not None:
-            if st.session_state['analysis_type'] == 'overview':
-                data_overview(df)
-            elif st.session_state['analysis_type'] == 'missing_values':
-                check_missing_duplicate_values(df)
-            elif st.session_state['analysis_type'] == 'correlation':
-                correlation_analysis(df)
-            elif st.session_state['analysis_type'] == 'summary':
-                data_summarization(df)
-
+            analysis_result = perform_analysis(df, st.session_state['analysis_type'])
+            st.write(analysis_result)
 
         question = st.text_input("Ask a question about your data", placeholder="E.g., What is the average sales quantity?")
 
