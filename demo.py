@@ -78,8 +78,8 @@ btn_style = """
         }
         
         .card-btn:hover {
-            color: white;
-            background-color: #4CAF50;
+            color: dark gray;
+            background-color: #808080;
         }
         
         .card-btn.clicked {

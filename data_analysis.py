@@ -65,7 +65,7 @@ def start_data_analysis():
                 }
                 
                 div.stButton > button:hover {
-                    color: white;
+                    color: dark gray;
                 }
             </style>
             """
@@ -82,16 +82,39 @@ def start_data_analysis():
             with col:
                 if st.button(button_labels[i]):
                     st.session_state['analysis_type'] = analysis_types[i]
+        
+        # Function to handle data overview
+        def data_overview(df):
+            st.write("Displaying data overview...")
+            st.write(df.describe())
 
+        # Function to handle missing/duplicate values analysis
+        def check_missing_duplicate_values(df):
+            st.write("Analyzing missing or duplicate values...")
+            st.write(f"Missing Values:\n{df.isnull().sum()}")
+            st.write(f"Duplicate Rows:\n{df.duplicated().sum()}")
+
+        # Function to handle correlation analysis
+        def correlation_analysis(df):
+            st.write("Performing correlation analysis...")
+            st.write(df.corr())
+
+        # Function to handle data summarization
+        def data_summarization(df):
+            st.write("Summarizing data...")
+            st.write(df.describe(include='all'))
+
+        # Dispatching analysis based on user selection
         if st.session_state['analysis_type'] is not None:
             if st.session_state['analysis_type'] == 'overview':
-                st.write("Displaying data overview...")
+                data_overview(df)
             elif st.session_state['analysis_type'] == 'missing_values':
-                st.write("Analyzing missing or duplicate values...")
+                check_missing_duplicate_values(df)
             elif st.session_state['analysis_type'] == 'correlation':
-                st.write("Performing correlation analysis...")
+                correlation_analysis(df)
             elif st.session_state['analysis_type'] == 'summary':
-                st.write("Summarizing data...")
+                data_summarization(df)
+
 
         question = st.text_input("Ask a question about your data", placeholder="E.g., What is the average sales quantity?")
 
