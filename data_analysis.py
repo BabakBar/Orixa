@@ -87,19 +87,20 @@ def start_data_analysis():
         # Function to handle analysis and explanations
         def perform_analysis(df, analysis_type):
             if analysis_type == 'overview':
-                response = agent.invoke("Provide an overview of the data including number of entries, time range, and top categories.")
+                response = agent.invoke("Provide an overview of the data including number of entries and time range with explanations. use df.info()")
             elif analysis_type == 'missing_values':
-                response = agent.invoke("Check for missing or duplicate values and count unique values for each column.")
+                response = agent.invoke("Check for missing or duplicate values and count unique values for each column with explanations.")
             elif analysis_type == 'correlation':
-                response = agent.invoke("Analyze the correlation between sales and profit, and between discount and profit.")
+                response = agent.invoke("Analyze the correlation between key metrics in the dataset, such as sales and profit with explanations.")
             elif analysis_type == 'summary':
-                response = agent.invoke("Summarize total sales and profit, average discount rate, and sales by region. Provide summary statistics for numerical columns.")
+                response = agent.invoke("Summarize key metrics in dataset like total sales and profit, average discount rate, and sales by region. Provide summary statistics for numerical columns with explanations. use  df.describe()")
             return response["output"]
 
         # Dispatching analysis based on user selection
         if st.session_state['analysis_type'] is not None:
-            analysis_result = perform_analysis(df, st.session_state['analysis_type'])
-            st.write(analysis_result)
+            with st.spinner("Analyzing..."):
+                analysis_result = perform_analysis(df, st.session_state['analysis_type'])
+                st.write(analysis_result)
 
         question = st.text_input("Ask a question about your data", placeholder="E.g., What is the average sales quantity?")
 
