@@ -85,6 +85,7 @@ def start_data_analysis():
         
 
         # Function to handle analysis and explanations
+        @st.cache_data
         def perform_analysis(df, analysis_type):
             if analysis_type == 'overview':
                 response = agent.invoke("Provide an overview of the data including number of entries and time range with explanations. use df.info()")
