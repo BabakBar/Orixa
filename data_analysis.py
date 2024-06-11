@@ -126,27 +126,25 @@ def start_data_analysis():
                 st.write(analysis_result)
 
         # Viz part
-        @st.cache_data
-        def viz_options(df):
-            st.header("Data Visualization")
-            
-            chart_type = st.selectbox("Select Chart Type", ["Bar Chart", "Line Chart", "Scatter Plot"])
-            x_axis = st.selectbox("Select X-Axis", df.columns)
-            y_axis = st.selectbox("Select Y-Axis", df.columns)
-            
-            if st.button("Generate Chart"):
-                if chart_type == "Bar Chart":
-                    fig, ax = plt.subplots()
-                    sns.barplot(x=x_axis, y=y_axis, data=df, ax=ax)
-                    st.pyplot(fig)
-                elif chart_type == "Line Chart":
-                    fig, ax = plt.subplots()
-                    sns.lineplot(x=x_axis, y=y_axis, data=df, ax=ax)
-                    st.pyplot(fig)
-                elif chart_type == "Scatter Plot":
-                    fig, ax = plt.subplots()
-                    sns.scatterplot(x=x_axis, y=y_axis, data=df, ax=ax)
-                    st.pyplot(fig)
+        st.header("Data Visualization")
+        
+        chart_type = st.selectbox("Select Chart Type", ["Bar Chart", "Line Chart", "Scatter Plot"])
+        x_axis = st.selectbox("Select X-Axis", df.columns)
+        y_axis = st.selectbox("Select Y-Axis", df.columns)
+        
+        if st.button("Generate Chart"):
+            if chart_type == "Bar Chart":
+                fig, ax = plt.subplots()
+                sns.barplot(x=x_axis, y=y_axis, data=df, ax=ax)
+                st.pyplot(fig)
+            elif chart_type == "Line Chart":
+                fig, ax = plt.subplots()
+                sns.lineplot(x=x_axis, y=y_axis, data=df, ax=ax)
+                st.pyplot(fig)
+            elif chart_type == "Scatter Plot":
+                fig, ax = plt.subplots()
+                sns.scatterplot(x=x_axis, y=y_axis, data=df, ax=ax)
+                st.pyplot(fig)
                     
         def analyze_variable(agent, variable):
             st.line_chart(st.session_state["df"], y=[variable])
