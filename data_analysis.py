@@ -144,22 +144,16 @@ def start_data_analysis():
 def function_question_variable(_agent, df, user_question_variable):
     st.line_chart(df, y=[user_question_variable])
     
-    summary_statistics = _agent.invoke(f"Provide detailed summary statistics for {user_question_variable}.")
-    st.write("### Summary Statistics")
+    summary_statistics = _agent.invoke(f"Provide a simple summary statistics for {user_question_variable}.")
+    st.write("#### Summary Statistics")
     st.write(summary_statistics["output"])
-    
-    # Check for normality and specific distribution shapes
-    normality = _agent.invoke(f"Analyze the distribution of {user_question_variable}. Check for normality and describe the distribution shape.")
-    st.write("### Distribution Analysis")
-    st.write(normality["output"])
     
     # Analyze trends, seasonality, and cyclic patterns
     trends = _agent.invoke(f"Examine {user_question_variable} for any observable trends, seasonality, and cyclic patterns. Provide insights on these patterns.")
-    st.write("### Trend Analysis")
+    st.write("#### Trend Analysis")
     st.write(trends["output"])
 
-if __name__ == "__main__":
-    start_data_analysis()            
+         
         # # Viz part
         # st.header("Data Visualization")
         
