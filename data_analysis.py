@@ -135,28 +135,31 @@ def start_data_analysis():
                 response = agent.invoke(question)
                 st.write(response["output"])
         
-        user_question_variable = st.text_input('What variable are you interested in?')
+        # Variable selection dropdown
+        user_question_variable = st.selectbox('Select a variable for Visualization:', df.columns)
         if user_question_variable:
-            function_question_variable(agent, df, user_question_variable)
+            if st.button("Analyze Variable"):
+                function_question_variable(_agent=agent, df=df, user_question_variable=user_question_variable)
 
-@st.cache_data            
-def function_question_variable(agent, df, user_question_variable):
+def function_question_variable(_agent, df, user_question_variable):
     st.line_chart(df, y=[user_question_variable])
     
-    summary_statistics = agent.invoke(f"What are the mean, median, mode, standard deviation, variance, range, quartiles, skewness and kurtosis of {user_question_variable}")
+    summary_statistics = _agent.invoke(f"What are the mean, median, mode, standard deviation, variance, range, quartiles, skewness and kurtosis of {user_question_variable}")
     st.write(summary_statistics["output"])
     
-    normality = agent.invoke(f"Check for normality or specific distribution shapes of {user_question_variable}")
+    normality = _agent.invoke(f"Check for normality or specific distribution shapes of {user_question_variable}")
     st.write(normality["output"])
     
-    outliers = agent.invoke(f"Assess the presence of outliers of {user_question_variable}")
+    outliers = _agent.invoke(f"Assess the presence of outliers of {user_question_variable}")
     st.write(outliers["output"])
     
-    trends = agent.invoke(f"Analyze trends, seasonality, and cyclic patterns of {user_question_variable}")
+    # Analyze trends, seasonality, and cyclic patterns
+    trends = _agent.invoke(f"Examine {user_question_variable} for any observable trends, seasonality, and cyclic patterns. Provide insights on these patterns.")
+    st.write("### Trend Analysis")
     st.write(trends["output"])
 
-# if __name__ == "__main__":
-#     start_data_analysis()            
+if __name__ == "__main__":
+    start_data_analysis()            
         # # Viz part
         # st.header("Data Visualization")
         
