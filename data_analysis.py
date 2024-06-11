@@ -6,8 +6,8 @@ from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe
 from langchain.agents.agent_types import AgentType
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
-import seaborn as sns
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -135,7 +135,28 @@ def start_data_analysis():
                 response = agent.invoke(question)
                 st.write(response["output"])
         
-        
+        user_question_variable = st.text_input('What variable are you interested in?')
+        if user_question_variable:
+            function_question_variable(agent, df, user_question_variable)
+
+@st.cache_data            
+def function_question_variable(agent, df, user_question_variable):
+    st.line_chart(df, y=[user_question_variable])
+    
+    summary_statistics = agent.invoke(f"What are the mean, median, mode, standard deviation, variance, range, quartiles, skewness and kurtosis of {user_question_variable}")
+    st.write(summary_statistics["output"])
+    
+    normality = agent.invoke(f"Check for normality or specific distribution shapes of {user_question_variable}")
+    st.write(normality["output"])
+    
+    outliers = agent.invoke(f"Assess the presence of outliers of {user_question_variable}")
+    st.write(outliers["output"])
+    
+    trends = agent.invoke(f"Analyze trends, seasonality, and cyclic patterns of {user_question_variable}")
+    st.write(trends["output"])
+
+# if __name__ == "__main__":
+#     start_data_analysis()            
         # # Viz part
         # st.header("Data Visualization")
         
