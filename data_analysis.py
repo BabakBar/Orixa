@@ -134,58 +134,60 @@ def start_data_analysis():
             with st.spinner("Analyzing..."):
                 response = agent.invoke(question)
                 st.write(response["output"])
-        # Viz part
-        st.header("Data Visualization")
         
-        chart_type = st.selectbox("Select Chart Type", ["Bar Chart", "Line Chart", "Scatter Plot"])
-        x_axis = st.selectbox("Select X-Axis", df.columns)
-        y_axis = st.selectbox("Select Y-Axis", df.columns)
         
-        if st.button("Generate Chart"):
-            if chart_type == "Bar Chart":
-                fig, ax = plt.subplots()
-                sns.barplot(x=x_axis, y=y_axis, data=df, ax=ax)
-                st.pyplot(fig)
-            elif chart_type == "Line Chart":
-                fig, ax = plt.subplots()
-                sns.lineplot(x=x_axis, y=y_axis, data=df, ax=ax)
-                st.pyplot(fig)
-            elif chart_type == "Scatter Plot":
-                fig, ax = plt.subplots()
-                sns.scatterplot(x=x_axis, y=y_axis, data=df, ax=ax)
-                st.pyplot(fig)
+        # # Viz part
+        # st.header("Data Visualization")
+        
+        # chart_type = st.selectbox("Select Chart Type", ["Bar Chart", "Line Chart", "Scatter Plot"])
+        # x_axis = st.selectbox("Select X-Axis", df.columns)
+        # y_axis = st.selectbox("Select Y-Axis", df.columns)
+        
+        # if st.button("Generate Chart"):
+        #     if chart_type == "Bar Chart":
+        #         fig, ax = plt.subplots()
+        #         sns.barplot(x=x_axis, y=y_axis, data=df, ax=ax)
+        #         st.pyplot(fig)
+        #     elif chart_type == "Line Chart":
+        #         fig, ax = plt.subplots()
+        #         sns.lineplot(x=x_axis, y=y_axis, data=df, ax=ax)
+        #         st.pyplot(fig)
+        #     elif chart_type == "Scatter Plot":
+        #         fig, ax = plt.subplots()
+        #         sns.scatterplot(x=x_axis, y=y_axis, data=df, ax=ax)
+        #         st.pyplot(fig)
                     
-        def analyze_variable(agent, variable):
-            st.line_chart(st.session_state["df"], y=[variable])
-            summary_statistics = agent.invoke(f"What are the mean, median, mode, standard deviation, variance, range, quartiles, skewness and kurtosis of {variable}")
-            st.write(summary_statistics["output"])
-            normality = agent.invoke(f"Check for normality or specific distribution shapes of {variable}")
-            st.write(normality["output"])
-            outliers = agent.invoke(f"Assess the presence of outliers of {variable}")
-            st.write(outliers["output"])
-            trends = agent.invoke(f"Analyze trends, seasonality, and cyclic patterns of {variable}")
-            st.write(trends["output"])
-            missing_values = agent.invoke(f"Determine the extent of missing values of {variable}")
-            st.write(missing_values["output"])
+        # def analyze_variable(agent, variable):
+        #     st.line_chart(st.session_state["df"], y=[variable])
+        #     summary_statistics = agent.invoke(f"What are the mean, median, mode, standard deviation, variance, range, quartiles, skewness and kurtosis of {variable}")
+        #     st.write(summary_statistics["output"])
+        #     normality = agent.invoke(f"Check for normality or specific distribution shapes of {variable}")
+        #     st.write(normality["output"])
+        #     outliers = agent.invoke(f"Assess the presence of outliers of {variable}")
+        #     st.write(outliers["output"])
+        #     trends = agent.invoke(f"Analyze trends, seasonality, and cyclic patterns of {variable}")
+        #     st.write(trends["output"])
+        #     missing_values = agent.invoke(f"Determine the extent of missing values of {variable}")
+        #     st.write(missing_values["output"])
 
-        def question_for_viz(agent, question):
-            response = agent.invoke(question)
-            st.write(response["output"])
-            if "visualization" in response:
-                chart_type = response["visualization"]["type"]
-                x_axis = response["visualization"]["x"]
-                y_axis = response["visualization"]["y"]
-                if chart_type == "Bar Chart":
-                    fig, ax = plt.subplots()
-                    sns.barplot(x=x_axis, y=y_axis, data=st.session_state["df"], ax=ax)
-                    st.pyplot(fig)
-                elif chart_type == "Line Chart":
-                    fig, ax = plt.subplots()
-                    sns.lineplot(x=x_axis, y=y_axis, data=st.session_state["df"], ax=ax)
-                    st.pyplot(fig)
-                elif chart_type == "Scatter Plot":
-                    fig, ax = plt.subplots()
-                    sns.scatterplot(x=x_axis, y=y_axis, data=st.session_state["df"], ax=ax)
-                    st.pyplot(fig)
+        # def question_for_viz(agent, question):
+        #     response = agent.invoke(question)
+        #     st.write(response["output"])
+        #     if "visualization" in response:
+        #         chart_type = response["visualization"]["type"]
+        #         x_axis = response["visualization"]["x"]
+        #         y_axis = response["visualization"]["y"]
+        #         if chart_type == "Bar Chart":
+        #             fig, ax = plt.subplots()
+        #             sns.barplot(x=x_axis, y=y_axis, data=st.session_state["df"], ax=ax)
+        #             st.pyplot(fig)
+        #         elif chart_type == "Line Chart":
+        #             fig, ax = plt.subplots()
+        #             sns.lineplot(x=x_axis, y=y_axis, data=st.session_state["df"], ax=ax)
+        #             st.pyplot(fig)
+        #         elif chart_type == "Scatter Plot":
+        #             fig, ax = plt.subplots()
+        #             sns.scatterplot(x=x_axis, y=y_axis, data=st.session_state["df"], ax=ax)
+        #             st.pyplot(fig)
         
 
