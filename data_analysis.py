@@ -124,7 +124,16 @@ def start_data_analysis():
                     df, st.session_state["analysis_type"]
                 )
                 st.write(analysis_result)
+        
+        question = st.text_input(
+            "Ask a question about your data",
+            placeholder="E.g., What is the average sales quantity?",
+        )
 
+        if question:
+            with st.spinner("Analyzing..."):
+                response = agent.invoke(question)
+                st.write(response["output"])
         # Viz part
         st.header("Data Visualization")
         
@@ -179,12 +188,4 @@ def start_data_analysis():
                     sns.scatterplot(x=x_axis, y=y_axis, data=st.session_state["df"], ax=ax)
                     st.pyplot(fig)
         
-        question = st.text_input(
-            "Ask a question about your data",
-            placeholder="E.g., What is the average sales quantity?",
-        )
 
-        if question:
-            with st.spinner("Analyzing..."):
-                response = agent.invoke(question)
-                st.write(response["output"])
