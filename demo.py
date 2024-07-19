@@ -6,7 +6,7 @@ from sidebar import render_sidebar
 from competitor_analysis import analyze_competitors
 from creative_effectiveness import analyze_creativity
 from generate_content import generate_content
-from audience_insights import analyze_audience
+#from audience_insights import analyze_audience
 from data_analysis import start_data_analysis
 from dotenv import load_dotenv
 load_dotenv()
@@ -93,7 +93,7 @@ st.markdown(btn_style, unsafe_allow_html=True)
 
 # Card titles and contents
 card_titles = ["Competetitor Content Analysis", "Creative Effectiveness", "Generate Content", "Audience Insights"]
-card_functions = [analyze_competitors, analyze_creativity, generate_content, analyze_audience]
+card_functions = [analyze_competitors, analyze_creativity, generate_content]
 card_contents = [
     "Find out trends and competitive whitespaces",
     "Expert review on existing creativity",

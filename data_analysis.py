@@ -17,7 +17,7 @@ os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
 os.environ["LANGCHAIN_PROJECT"] = os.getenv("LANGCHAIN_PROJECT")
 
 # AI model
-llm0 = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
+llm0 = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 
 def start_data_analysis():
