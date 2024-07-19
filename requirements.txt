@@ -28,3 +28,4 @@ ipykernel
 unstructured
 python-pptx
 Pillow
+pymongo
