@@ -53,6 +53,7 @@ def start_data_analysis():
             df,
             verbose=True,
             agent_type=AgentType.OPENAI_FUNCTIONS,
+            allow_dangerous_code=True  # Opt-in to allow execution of potentially dangerous code
         )
 
         st.write("Choose an analysis option to start or directly ask your questions")
@@ -207,5 +208,3 @@ def function_question_variable(_agent, df, user_question_variable):
         #             fig, ax = plt.subplots()
         #             sns.scatterplot(x=x_axis, y=y_axis, data=st.session_state["df"], ax=ax)
         #             st.pyplot(fig)
-        
-
