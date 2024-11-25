@@ -1,7 +1,6 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
 .Python
 env/
@@ -38,8 +37,11 @@ ENV/
 # Logs
 *.log
 
-# Archive
-archive/
+# Aider related
+.aider*
+.aider.chat.history.md
+.aider.input.history
+.aider.tags.cache.v3/
 
 # Data
 data/*.csv
