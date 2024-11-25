@@ -1,250 +1,181 @@
-"""Streamlit application for data analysis."""
+"""Streamlit application for Google Analytics 4 data analysis."""
 import io
-import os
 import streamlit as st
 import pandas as pd
-from dotenv import load_dotenv
 from core.analyzer import DataAnalyzer
+from core.models import AVAILABLE_MODELS
+from core.config import Config
 
-# Load environment variables
-load_dotenv()
+# Setup environment
+Config.setup_environment()
+
+# Get available models
+AVAILABLE_MODEL_STATUS = Config.get_available_models()
 
 # Configure page
 st.set_page_config(layout="wide")
 
 def render_sidebar():
-    """Render the sidebar with navigation."""
+    """Render the sidebar with GA4 guidance and model selection."""
     with st.sidebar:
-        st.title("Guide")
-        st.write("""
-        Welcome to Orixa, your intelligent assistant for
-        data analysis. Follow these steps to gain insights
-        from your data:
-        """)
+        st.title("GA4 Analysis Guide")
         
-        st.markdown("""
-        1. Upload your CSV data file.
-        2. Preview your data to ensure correctness.
-        3. Use the analysis options to start gaining insights.
-        4. Ask specific questions about your data.
+        # Model Selection
+        st.markdown("### 🤖 Model Selection")
+        
+        # Filter available models
+        available_models = {
+            name: model.name
+            for name, model in AVAILABLE_MODELS.items()
+            if AVAILABLE_MODEL_STATUS.get(model.display_name, False)
+        }
+        
+        if not available_models:
+            st.error("⚠️ No AI models available. Please check your API keys.")
+            st.stop()
+        
+        model_options = {
+            AVAILABLE_MODELS[model_name].display_name: model_name 
+            for model_name in available_models
+        }
+        
+        selected_display_name = st.selectbox(
+            "Choose AI Model:",
+            options=list(model_options.keys()),
+            index=0
+        )
+        
+        selected_model = model_options[selected_display_name]
+        
+        # Update model if changed
+        if 'current_model' not in st.session_state or st.session_state.current_model != selected_model:
+            st.session_state.current_model = selected_model
+            if 'analyzer' in st.session_state:
+                st.session_state.analyzer.switch_model(selected_model)
+                st.rerun()
+        
+        # Show model info
+        model_config = AVAILABLE_MODELS[selected_model]
+        st.markdown("#### Model Details")
+        st.markdown(f"""
+        - Provider: {model_config.provider.title()}
+        - Model: {model_config.model_id}
         """)
         
         st.markdown("---")
-        st.markdown("Made by Orixa")
-
-# Custom CSS for dark theme styling
-def apply_custom_style():
-    st.markdown("""
-        <style>
-        /* Main container */
-        .main {
-            background-color: #0E1117;
-            color: #FAFAFA;
-        }
         
-        /* Headers */
-        h1, h2, h3, h4, h5, h6 {
-            color: #FAFAFA;
-            padding: 0.5rem 0;
-        }
+        st.markdown("### 📊 Quick Start")
+        st.markdown("""
+        1. Choose your preferred AI model above
+        2. Upload your GA4 data
+        3. Click 'Analyze Data'
+        4. Get instant insights
+        """)
         
-        /* Module buttons */
-        .module-button {
-            background-color: transparent;
-            border: 2px solid #4CAF50;
-            color: #FAFAFA;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 5px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+        st.markdown("### ❓ Need Help?")
+        st.markdown("""
+        You can ask specific questions about your data using the
+        question box below the analysis.
         
-        .module-button:hover {
-            background-color: rgba(76, 175, 80, 0.1);
-        }
-        
-        /* Analysis buttons */
-        .stButton > button {
-            width: 100%;
-            background-color: transparent;
-            border: 2px solid #4CAF50;
-            color: #FAFAFA;
-            padding: 10px 24px;
-            margin: 5px 0;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .stButton > button:hover {
-            background-color: rgba(76, 175, 80, 0.1);
-        }
-        
-        /* Analysis results */
-        .analysis-result {
-            background-color: #1E1E1E;
-            border: 1px solid #333;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 10px 0;
-            color: #FAFAFA;
-        }
-        
-        /* Text input */
-        .stTextInput > div > div > input {
-            background-color: #1E1E1E;
-            color: #FAFAFA;
-            border: 1px solid #333;
-        }
-        
-        /* Expander */
-        .streamlit-expanderHeader {
-            background-color: #1E1E1E;
-            color: #FAFAFA;
-        }
-        
-        /* Dataframe */
-        .dataframe {
-            background-color: #1E1E1E;
-            color: #FAFAFA;
-        }
-        
-        /* Remove padding */
-        .block-container {
-            padding-top: 2rem;
-            padding-bottom: 0rem;
-            padding-left: 2rem;
-            padding-right: 2rem;
-        }
-        
-        /* Section spacing */
-        .section-container {
-            margin-bottom: 2rem;
-        }
-        
-        /* Spinner */
-        .stSpinner > div {
-            border-top-color: #4CAF50 !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-# Initialize the analyzer in session state
-if 'analyzer' not in st.session_state:
-    st.session_state.analyzer = DataAnalyzer()
+        Try different AI models to compare insights!
+        """)
 
 def main():
-    # Apply custom styling
-    apply_custom_style()
-    
     # Page header
-    st.title('Orixa: Enhanced Customer Insight 🚀')
-    st.markdown("Orixa leverages the power of AI to turn your data into insights.")
+    st.title('Orixa: GA4 Data Analysis Platform 🚀')
+    st.markdown("Get instant insights from your Google Analytics 4 data.")
+    
+    # Initialize session state
+    if 'current_model' not in st.session_state:
+        # Get first available model
+        available_model = next(
+            (name for name, available in AVAILABLE_MODEL_STATUS.items() if available),
+            None
+        )
+        if not available_model:
+            st.error("⚠️ No AI models available. Please configure at least one API key.")
+            st.stop()
+            
+        st.session_state.current_model = next(
+            name for name, model in AVAILABLE_MODELS.items()
+            if model.display_name == available_model
+        )
+    
+    if 'analyzer' not in st.session_state:
+        st.session_state.analyzer = DataAnalyzer(st.session_state.current_model)
+        st.session_state.analysis_complete = False
     
     # Render sidebar
     render_sidebar()
     
-    # Module selection
-    st.markdown("### Choose Module")
+    # Data Upload Section
+    uploaded_file = st.file_uploader("Upload your GA4 data (CSV)", type="csv")
     
-    col1, col2 = st.columns(2)
-    col3, col4 = st.columns(2)
+    if uploaded_file is not None:
+        try:
+            # Create a loading placeholder
+            with st.status("Processing data...", expanded=True) as status:
+                # Read CSV file
+                df = pd.read_csv(uploaded_file)
+                status.update(label="Loading data...", state="running")
+                
+                try:
+                    # Load and process data
+                    st.session_state.analyzer.load_data(df)
+                    st.session_state.df = df
+                    status.update(label="✅ Data loaded successfully!", state="complete")
+                    st.session_state.analysis_complete = True
+                    
+                except ValueError as e:
+                    status.update(label=f"❌ Error: {str(e)}", state="error")
+                    st.stop()
+                    
+        except Exception as e:
+            st.error("❌ Error reading file. Please ensure you've uploaded a valid GA4 data export.")
+            st.stop()
     
-    with col1:
-        st.markdown('<div class="module-button">Competitor Content Analysis</div>', unsafe_allow_html=True)
-    with col2:
-        st.markdown('<div class="module-button">Creative Effectiveness</div>', unsafe_allow_html=True)
-    with col3:
-        st.markdown('<div class="module-button">Generate Content</div>', unsafe_allow_html=True)
-    with col4:
-        st.markdown('<div class="module-button">Audience Insights</div>', unsafe_allow_html=True)
-    
-    # Data Analysis Section
-    st.markdown("### Data Analysis")
-    
-    # File upload
-    if "df" not in st.session_state:
-        csv_file = st.file_uploader("Upload a CSV file to begin", type="csv")
-        if csv_file is not None:
-            try:
-                # Try different encodings
-                encodings = ['utf-8', 'ISO-8859-1', 'cp1252']
-                df = None
-                for encoding in encodings:
+    # Only show analysis section if data is loaded and processed
+    if hasattr(st.session_state, 'analysis_complete') and st.session_state.analysis_complete:
+        st.markdown("---")
+        
+        # Show current model
+        current_model = AVAILABLE_MODELS[st.session_state.current_model]
+        st.info(f"🤖 Currently using: {current_model.display_name}")
+        
+        # Analysis section with tabs
+        tab1, tab2 = st.tabs(["📊 Key Insights", "❓ Ask Questions"])
+        
+        with tab1:
+            if st.button("Analyze Data", type="primary"):
+                with st.spinner(f"Generating insights using {current_model.display_name}..."):
                     try:
-                        csv_file.seek(0)
-                        file_content = csv_file.getvalue()
-                        df = pd.read_csv(io.StringIO(file_content.decode(encoding)))
-                        break
-                    except UnicodeDecodeError:
-                        continue
-                
-                if df is None:
-                    st.error("Could not read the file with any supported encoding")
-                    return
-                
-                st.session_state.analyzer.load_data(df)
-                st.session_state.df = df
-            except Exception as e:
-                st.error(f"Error loading file: {str(e)}")
-                return
-    
-    # Analysis interface
-    if hasattr(st.session_state, 'df'):
-        with st.expander("🔎 Data Preview"):
-            st.dataframe(st.session_state.df.head())
+                        result = st.session_state.analyzer.analyze("overview")
+                        
+                        # Display results in a clean format
+                        st.markdown("### 📈 Analysis Results")
+                        st.markdown(result)
+                        
+                    except Exception as e:
+                        st.error(f"❌ Error during analysis: {str(e)}")
         
-        # Analysis Options
-        st.markdown("### Analysis Options")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            if st.button("Data Overview"):
-                with st.spinner("Analyzing..."):
-                    result = st.session_state.analyzer.analyze("overview")
-                    st.markdown(f'<div class="analysis-result">{result}</div>', unsafe_allow_html=True)
+        with tab2:
+            st.markdown("### Ask Specific Questions")
+            st.markdown("""
+            Examples:
+            - What are the top converting pages?
+            - Which traffic sources have the highest engagement?
+            - What's the most common user journey?
+            """)
             
-            if st.button("Correlation Analysis"):
-                with st.spinner("Analyzing..."):
-                    result = st.session_state.analyzer.analyze("correlation")
-                    st.markdown(f'<div class="analysis-result">{result}</div>', unsafe_allow_html=True)
-        
-        with col2:
-            if st.button("Missing Values"):
-                with st.spinner("Analyzing..."):
-                    result = st.session_state.analyzer.analyze("missing_values")
-                    st.markdown(f'<div class="analysis-result">{result}</div>', unsafe_allow_html=True)
-            
-            if st.button("Data Summary"):
-                with st.spinner("Analyzing..."):
-                    result = st.session_state.analyzer.analyze("summary")
-                    st.markdown(f'<div class="analysis-result">{result}</div>', unsafe_allow_html=True)
-        
-        # Questions
-        st.markdown("### Ask Questions")
-        question = st.text_input("Ask a question about your data:", placeholder="E.g., What is the average sales quantity?")
-        if question:
-            with st.spinner("Analyzing..."):
-                result = st.session_state.analyzer.ask(question)
-                st.markdown(f'<div class="analysis-result">{result}</div>', unsafe_allow_html=True)
-        
-        # Variable Analysis
-        st.markdown("### Variable Analysis")
-        variable = st.selectbox("Select a variable to analyze:", st.session_state.df.columns)
-        if st.button("Analyze Variable"):
-            with st.spinner("Analyzing..."):
-                result = st.session_state.analyzer.analyze_variable(variable)
-                
-                # Show line chart
-                st.line_chart(result["data"])
-                
-                # Show analysis results
-                st.markdown("#### Summary Statistics")
-                st.markdown(f'<div class="analysis-result">{result["summary"]}</div>', unsafe_allow_html=True)
-                st.markdown("#### Trend Analysis")
-                st.markdown(f'<div class="analysis-result">{result["trends"]}</div>', unsafe_allow_html=True)
+            question = st.text_input("Your question:")
+            if question:
+                with st.spinner(f"Finding answers using {current_model.display_name}..."):
+                    try:
+                        result = st.session_state.analyzer.ask(question)
+                        st.markdown("### 💡 Answer")
+                        st.markdown(result)
+                    except Exception as e:
+                        st.error(f"❌ Error processing question: {str(e)}")
 
 if __name__ == "__main__":
     main()

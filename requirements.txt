@@ -1,20 +1,23 @@
 # Core dependencies
 pandas>=1.5.3
 numpy>=1.24.3
+streamlit>=1.24.0
+python-dotenv>=1.0.0
 
-# LLM and AI
-langchain-openai>=0.0.2
+# LLM Integrations
 langchain-core>=0.1.4
 langchain-experimental>=0.0.49
+langchain-openai>=0.0.2
+langchain-anthropic>=0.0.8
+langchain-google-genai>=0.0.4
 
-# UI
-streamlit>=1.24.0
+# LLM Providers
+openai>=1.6.1
+anthropic>=0.8.1
+google-generativeai>=0.3.2
 
 # Visualization
 plotly>=5.15.0
-
-# Configuration
-python-dotenv>=1.0.0
 
 # Development tools
 black>=23.3.0
